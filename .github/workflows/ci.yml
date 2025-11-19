@@ -23,18 +23,20 @@ jobs:
         python-version: '3.9'
 
     # 3. Instala dependências e roda testes do Serviço A
+    # Alteração: Adicionado 'test_app.py' explicitamente no comando pytest
     - name: Test Service A (Report)
       working-directory: ./currency-report
       run: |
         pip install -r requirements.txt
-        pytest
+        pytest -v test_app.py
 
     # 4. Instala dependências e roda testes do Serviço B
+    # Alteração: Adicionado 'test_app.py' explicitamente no comando pytest
     - name: Test Service B (History)
       working-directory: ./currency-history
       run: |
         pip install -r requirements.txt
-        pytest
+        pytest -v test_app.py
 
     # 5. Tenta buildar as imagens Docker (Garante que Dockerfiles estão OK)
     - name: Build Docker Images
