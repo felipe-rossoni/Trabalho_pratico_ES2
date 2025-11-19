@@ -1,0 +1,43 @@
+name: CI Pipeline
+
+# Gatilho: roda a cada push na branch main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Faz checkout do código
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2. Configura Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    # 3. Instala dependências e roda testes do Serviço A
+    - name: Test Service A (Report)
+      working-directory: ./currency-report
+      run: |
+        pip install -r requirements.txt
+        pytest
+
+    # 4. Instala dependências e roda testes do Serviço B
+    - name: Test Service B (History)
+      working-directory: ./currency-history
+      run: |
+        pip install -r requirements.txt
+        pytest
+
+    # 5. Tenta buildar as imagens Docker (Garante que Dockerfiles estão OK)
+    - name: Build Docker Images
+      run: |
+        docker build -t currency-report ./currency-report
+        docker build -t currency-history ./currency-history
