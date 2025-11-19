@@ -19,30 +19,28 @@ jobs:
       with:
         python-version: '3.9'
 
-    # --- BLOCO DE DEBUG (NOVO) ---
-    - name: Debug - Listar arquivos
-      run: |
-        echo "Mostrando arquivos na raiz:"
-        ls -la
-        echo "Mostrando arquivos em currency-report:"
-        ls -la currency-report/
-        echo "Mostrando arquivos em currency-history:"
-        ls -la currency-history/
-    # -----------------------------
-
+    # --- TESTE DO SERVIÇO A (REPORT) ---
     - name: Test Service A (Report)
       working-directory: ./currency-report
       run: |
         pip install -r requirements.txt
-        # O -vv mostra detalhes máximos
-        pytest -vv
+        pytest -v
+
+    # --- DEBUG E TESTE DO SERVIÇO B (HISTORY) ---
+    - name: Debug Service B Content
+      run: |
+        echo "--- Listando a pasta currency-history ---"
+        ls -la currency-history/
+        echo "--- Lendo o conteúdo do arquivo test_app.py ---"
+        cat currency-history/test_app.py
 
     - name: Test Service B (History)
       working-directory: ./currency-history
       run: |
         pip install -r requirements.txt
-        pytest -vv
+        pytest -v test_app.py
 
+    # --- BUILD DOCKER ---
     - name: Build Docker Images
       run: |
         docker build -t currency-report ./currency-report
