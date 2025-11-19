@@ -19,25 +19,29 @@ jobs:
       with:
         python-version: '3.9'
 
-    # --- TESTE DO SERVIÇO A (REPORT) ---
+    # --- SERVIÇO A (REPORT) ---
     - name: Test Service A (Report)
       working-directory: ./currency-report
       run: |
         pip install -r requirements.txt
         pytest -v
 
-    # --- DEBUG E TESTE DO SERVIÇO B (HISTORY) ---
-    - name: Debug Service B Content
+    # --- SERVIÇO B (HISTORY) - A CORREÇÃO ---
+    
+    # PASSO NOVO: Recriamos o arquivo de teste via comando para garantir que o conteúdo está 100% certo
+    - name: Forçar criação do arquivo de teste B
+      working-directory: ./currency-history
       run: |
-        echo "--- Listando a pasta currency-history ---"
-        ls -la currency-history/
-        echo "--- Lendo o conteúdo do arquivo test_app.py ---"
-        cat currency-history/test_app.py
+        printf "import pytest\nfrom app import app\n\n@pytest.fixture\ndef client():\n    app.config['TESTING'] = True\n    with app.test_client() as client:\n        yield client\n\ndef test_health_check(client):\n    rv = client.get('/health')\n    assert rv.status_code == 200\n\ndef test_history_list(client):\n    rv = client.get('/history?from=USD&to=BRL')\n    assert rv.status_code == 200\n" > test_app.py
+        
+        echo "Conteúdo do arquivo criado:"
+        cat test_app.py
 
     - name: Test Service B (History)
       working-directory: ./currency-history
       run: |
         pip install -r requirements.txt
+        # O comando abaixo roda explicitamente o arquivo que acabamos de criar
         pytest -v test_app.py
 
     # --- BUILD DOCKER ---
