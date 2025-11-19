@@ -1,0 +1,24 @@
+services:
+  currency-report:
+    build: ./currency-report
+    container_name: currency-report
+    ports:
+      - "8100:8100"
+    networks:
+      - currency-net
+    environment:
+      - FLASK_ENV=development
+
+  currency-history:
+    build: ./currency-history
+    container_name: currency-history
+    ports:
+      - "8101:8101"
+    networks:
+      - currency-net
+    environment:
+      - FLASK_ENV=development
+
+networks:
+  currency-net:
+    driver: bridge
