@@ -1,3 +1,4 @@
+# Grupo: Felipe Guimarães Rossoni
 # Trabalho Prático - Microsserviços de Câmbio
 Este projeto contém dois microsserviços mockados para consulta de câmbio e histórico, orquestrados via Docker Compose e com CI configurado.
 
